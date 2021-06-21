@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
+using System.Collections.Generic;
 using EFCore.Data;
-using Microsoft.EntityFrameworkCore;
+using EFCore.Categorias;
+using EFCore.Domain;
 
 namespace EFCore
 {
@@ -10,52 +10,86 @@ namespace EFCore
     {
         static void Main(string[] args)
         {
-            var dbContext = new AppDbContext();
-
-            #region Cria todo o banco de dados sem a necessidade de migrations
-            //EnsureCreateAndDeleteDb(dbContext);
+            #region Métodos comuns Database do EFCore
+            var metodosDatabaseEFCore = new MetodosDatabaseEFCore();
+            //metodosDatabaseEFCore.EnsureCreateAndDeleteDb();
+            //metodosDatabaseEFCore.ComandosSqlComProtecaoSqlInjection();
+            //metodosDatabaseEFCore.MigrationEmTempoReal();
+            //metodosDatabaseEFCore.VerificaConexaoComOBanco();
             #endregion
+            
+            //PopulateDatabase();
 
-            #region Forma de como verificar se a aplicação pode se conectar com o db
-            //VerificaConexaoComOBanco(dbContext);
+            #region Consultas EFCore
+            var consultas = new Consultas();    
+            consultas.TestandoFiltroConsultaGlobais();
             #endregion
-
-            #region Estratégia de melhor desempenho (Consulta dentro de um for)
-            //Levou 00:00:04.1575649 tempo
-            MelhorandoDesempenhoDeConsultasDentroDeUmFor(dbContext, false);
-            //Levou 00:00:00.1091444 tempo
-            MelhorandoDesempenhoDeConsultasDentroDeUmFor(dbContext, true);
-            #endregion
-
         }
 
-        private static void MelhorandoDesempenhoDeConsultasDentroDeUmFor(AppDbContext db, bool abreConexaoPrematura)
+        private static void PopulateDatabase()
         {
-            var conexao = db.Database.GetDbConnection(); //Pega a instancia do objeto de conexão
+            var db = new AppDbContext();
 
-            var sw = new Stopwatch();
-
-            if(abreConexaoPrematura) conexao.Open(); //Abre uma conexão
-
-            sw.Start();
-            for(var i = 0; i < 500; i++)
+            var pedido = new Pedido()
             {
-                //Sem abrir uma conexão antes,
-                //o ef abre e fecha a conexão 500 vezes
-                //com o conexao.Open(), apenas uma conexão é aberta
-                db.Pedidos.AsNoTracking().Any(); 
-            }
-            sw.Stop();
+                Solicitante = "Bruno",
+                Data = DateTime.Now,
+                Status = Enumerators.EStatus.Aberto,
+                Ativo = true,
+                ItensPedido = new List<ItemPedido>()
+                {
+                    new ItemPedido()
+                    {
+                        Nome = "Celular",
+                        Valor = 600
+                    },
+                    new ItemPedido()
+                    {
+                        Nome = "TV",
+                        Valor = 1600
+                    }
+                }
+            };
 
-            Console.WriteLine($"Levou {sw.Elapsed} tempo");
-        }
+            var pedido2 = new Pedido()
+            {
+                Solicitante = "João",
+                Data = DateTime.Now,
+                Status = Enumerators.EStatus.Aberto,
+                Ativo = true,
+                ItensPedido = new List<ItemPedido>()
+                {
+                    new ItemPedido()
+                    {
+                        Nome = "Sofá",
+                        Valor = 1500
+                    },
+                    new ItemPedido()
+                    {
+                        Nome = "Mesa",
+                        Valor = 2000
+                    }
+                }
+            };
 
-        private static bool VerificaConexaoComOBanco(AppDbContext db) => db.Database.CanConnect();
-        
-        private static void EnsureCreateAndDeleteDb(AppDbContext db)
-        {
-            //db.Database.EnsureCreated(); //Cria todo o banco de dados 
-            //db.Database.EnsureDeleted(); //Apaga todo o banco de dados
+            var pedido3 = new Pedido()
+            {
+                Solicitante = "Maria",
+                Data = DateTime.Now,
+                Status = Enumerators.EStatus.Concluido,
+                Ativo = false,
+                ItensPedido = new List<ItemPedido>()
+                {
+                    new ItemPedido()
+                    {
+                        Nome = "Cama",
+                        Valor = 1000
+                    }
+                }
+            };
+
+            db.AddRange(pedido, pedido2, pedido3);
+            db.SaveChanges();
         }
     }
 }

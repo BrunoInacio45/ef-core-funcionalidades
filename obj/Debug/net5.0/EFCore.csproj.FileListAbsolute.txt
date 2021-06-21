@@ -63,3 +63,5 @@
 /home/bruno/Lab/Estudos/EFCore/obj/Debug/net5.0/EFCore.genruntimeconfig.cache
 /home/bruno/Lab/Estudos/EFCore/bin/Debug/net5.0/Humanizer.dll
 /home/bruno/Lab/Estudos/EFCore/bin/Debug/net5.0/Microsoft.EntityFrameworkCore.Design.dll
+/home/bruno/Lab/Estudos/EFCore/bin/Debug/net5.0/Castle.Core.dll
+/home/bruno/Lab/Estudos/EFCore/bin/Debug/net5.0/Microsoft.EntityFrameworkCore.Proxies.dll

@@ -13,14 +13,15 @@ namespace EFCore.Data
         {
             var stringConnection = "Server=localhost;User Id=SA;Password=4DLtDj9d;Database=efcore;pooling=false";
             optionsBuilder
-                .UseSqlServer(stringConnection);
-                // .EnableSensitiveDataLogging()
-                // .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);   
+                .UseSqlServer(stringConnection)
+                .EnableSensitiveDataLogging()
+                // .UseLazyLoadingProxies()
+                .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);   
         }
 
-        // protected override void OnModelCreating(ModelBuilder modelBuilder)
-        // {
-        //     modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        // }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Pedido>().HasQueryFilter(x => x.Ativo);
+        }
     }
 }
