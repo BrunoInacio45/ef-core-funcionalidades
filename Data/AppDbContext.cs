@@ -13,7 +13,11 @@ namespace EFCore.Data
         {
             var stringConnection = "Server=localhost;User Id=SA;Password=4DLtDj9d;Database=efcore;pooling=false";
             optionsBuilder
-                .UseSqlServer(stringConnection)
+                .UseSqlServer
+                ( 
+                    stringConnection 
+                    //x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery) //ativa consulta com split query
+                )
                 .EnableSensitiveDataLogging()
                 // .UseLazyLoadingProxies()
                 .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);   
@@ -21,7 +25,7 @@ namespace EFCore.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Pedido>().HasQueryFilter(x => x.Ativo);
+            // modelBuilder.Entity<Pedido>().HasQueryFilter(x => x.Ativo);
         }
     }
 }

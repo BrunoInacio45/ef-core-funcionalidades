@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using EFCore.Data;
 using EFCore.Categorias;
 using EFCore.Domain;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFCore
 {
@@ -22,7 +24,12 @@ namespace EFCore
 
             #region Consultas EFCore
             var consultas = new Consultas();    
+            //consultas.ConsultasEagerAndExplicityAndLazyLoading();
             consultas.TestandoFiltroConsultaGlobais();
+            consultas.ConsultasProjetadas();
+            consultas.ConsultasCustomizadas();
+            consultas.ConsultasNomeadas();
+            consultas.ConsultasComSpliQuery();
             #endregion
         }
 

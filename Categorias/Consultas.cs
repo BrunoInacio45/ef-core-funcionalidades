@@ -14,6 +14,22 @@ namespace EFCore.Categorias
             _db = new AppDbContext();
         }
 
+        public void ConsultasComSpliQuery()
+        {
+            //resolve problema da explosão cartesiana
+            var pedidos = _db.Pedidos
+                            .Include(x => x.ItensPedido)
+                            .AsSplitQuery() //Disponível apenas no ef core > 5.0
+                            .ToList();
+
+            //configuração global no AppDbContext  
+            //ignorando split query quando config global estiver ativado
+            pedidos = _db.Pedidos
+                            .Include(x => x.ItensPedido)
+                            .AsSingleQuery() //Disponível apenas no ef core > 5.0
+                            .ToList();                           
+        }
+
         public void TestandoFiltroConsultaGlobais()
         {
             //Configuração no AppDbContext
@@ -30,7 +46,38 @@ namespace EFCore.Categorias
                 Console.WriteLine(pedido.Solicitante); 
         }
 
-        private void ConsultasEagerAndExplicityAndLazyLoading()
+        public void ConsultasNomeadas()
+        {
+            var pedidos = _db.Pedidos
+                            .TagWith(@"Adicionando comentários na consulta
+                            É útil durante uma captura de logs/auditoria")    
+                            .ToList();
+        }
+
+        public void ConsultasCustomizadas()
+        {
+            //Consultas personalizadas para não usar o linq
+            //mais utilizado quando é necessário criar otimizações
+            var ativo = true;
+            var pedidos = _db.Pedidos
+                            .FromSqlRaw("SELECT * FROM PEDIDOS WHERE ATIVO = {0}", ativo)
+                            .Where(x => x.Solicitante == "Bruno") //Composição
+                            .ToList();
+        }
+
+        public void ConsultasProjetadas()
+        {
+            //Forma para trazer apenas alguns campos das tabelas
+            var pedidos = _db.Pedidos
+                            .Select(x => new { 
+                                x.Solicitante,  
+                                ItensPedido = x.ItensPedido.Select(i => i.Nome)
+                            })
+                            .ToList();
+
+        }
+
+        public void ConsultasEagerAndExplicityAndLazyLoading()
         {
             #region Eager - Carregamento Adiantado
             var resultadoEager = _db.Pedidos.Include(x => x.ItensPedido);
