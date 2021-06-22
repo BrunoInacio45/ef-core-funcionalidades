@@ -11,16 +11,16 @@ namespace EFCore.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var stringConnection = "Server=localhost;User Id=SA;Password=4DLtDj9d;Database=efcore;pooling=false";
+            var stringConnection = "Server=localhost;User Id=SA;Password=;Database=efcore;pooling=false";
             optionsBuilder
                 .UseSqlServer
                 ( 
                     stringConnection 
                     //x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery) //ativa consulta com split query
-                )
-                .EnableSensitiveDataLogging()
+                );
+                // .EnableSensitiveDataLogging()
                 // .UseLazyLoadingProxies()
-                .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);   
+                // .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);   
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
